@@ -4,9 +4,43 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameplayEffectTypes.h"
 #include "AuraEffectActor.generated.h"
 
+struct FActiveGameplayEffectHandle;
 class UGameplayEffect;
+class UAbilitySystemComponent;
+
+UENUM(BlueprintType)
+enum class EEffectApplicationPolicy
+{
+	ApplyOnOverlap,
+	ApplyOnEndOverlap,
+	DoNotApply
+};
+
+UENUM(BlueprintType)
+enum class EEffectRemovalPolicy
+{
+	RemoveOnEndOverlap,
+	DoNotRemove
+};
+
+USTRUCT(BlueprintType)
+struct FGameplayEffectInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Effect Info")
+	TSubclassOf<UGameplayEffect> GameplayEffectClass;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Effect Info")
+	EEffectApplicationPolicy ApplicationPolicy = EEffectApplicationPolicy::DoNotApply;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Effect Info")
+	EEffectRemovalPolicy RemovalPolicy = EEffectRemovalPolicy::DoNotRemove;
+};
+
 
 UCLASS()
 class AURA_API AAuraEffectActor : public AActor
@@ -20,11 +54,23 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Applied Effects")
+	bool bDestroyOnEffectRemoval = false;
+
+	UFUNCTION(BlueprintCallable)
+	void OnOverlap(AActor* OverlappedActor);
+
+	UFUNCTION(BlueprintCallable)
+	void OnEndOverlap(AActor* OverlappedActor);
+	
 	UFUNCTION(BlueprintCallable, Category = "Applied Effects")
 	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass);
 
-	UPROPERTY(EditAnywhere, Category = "Applied Effects")
-	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
+	// Replace single-instance properties with an array of FGameplayEffectInfo
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Applied Effects")
+	TArray<FGameplayEffectInfo> Effects;
+	
+	TMap<FActiveGameplayEffectHandle, UAbilitySystemComponent*> ActiveEffectHandles;
 	
 private:
 
