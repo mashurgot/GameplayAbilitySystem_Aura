@@ -27,6 +27,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	UCameraComponent* CameraComponent;
 
+	virtual void InitAbilityActorInfo() override;
+
 private:
-	void InitAbilityActorInfo();	
+	
 };
