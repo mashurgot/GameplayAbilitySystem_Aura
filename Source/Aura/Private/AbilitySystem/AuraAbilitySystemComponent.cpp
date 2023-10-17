@@ -3,7 +3,7 @@
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 
-void UAuraAbilitySystemComponent::AbilityActorInofSet()
+void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UAuraAbilitySystemComponent::EffectApplied);
 }
@@ -13,8 +13,16 @@ void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* Ability
 {
 	FGameplayTagContainer TagContainer;
 	EffectSpec.GetAllAssetTags(TagContainer);
+
+	EffectAssetTags.Broadcast(TagContainer);
+
 	for (const FGameplayTag& Tag : TagContainer)
 	{
 		// TODO broadcast tag to widgetcontroller
+		if (GEngine)
+		{
+			FString TagString = Tag.ToString();
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *TagString);
+		}
 	}
 }
