@@ -12,13 +12,17 @@ class USpringArmComponent;
  * 
  */
 UCLASS()
-class AURA_API AAuraCharacter : public AAuraCharacterBase
+class AURA_API AAuraCharacter : public AAuraCharacterBase, public ICombatInterface
 {
 	GENERATED_BODY()
 public:
 	AAuraCharacter();
 	void OnRep_PlayerState();
 	virtual void PossessedBy(AController* NewController) override;
+
+	/** Combat Interface */
+	virtual int32 GetPlayerLevel() override;
+	/** End Combat Interface */
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
