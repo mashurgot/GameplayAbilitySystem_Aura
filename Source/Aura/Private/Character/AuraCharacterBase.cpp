@@ -36,6 +36,12 @@ void AAuraCharacterBase::InitAbilityActorInfo()
 	//
 }
 
+FVector AAuraCharacterBase::GetCombatSocketLocation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("GetCombatSocketLocation"));
+	return Weapon->GetSocketLocation(WeaponTipSocketName);
+}
+
 void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
 	ApplyEffectToSelf(DefaultPrimaryAttributes);

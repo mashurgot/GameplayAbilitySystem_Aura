@@ -43,6 +43,7 @@ private:
 
 	IEnemyInterface* LastActor;
 	IEnemyInterface* CurrentActor;
+	FHitResult CursorHit;
 
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
@@ -67,4 +68,6 @@ private:
 	float AutoRunAcceptanceRadius = 50.f;
 
 	TObjectPtr<USplineComponent> Spline;
+
+	void AutoRun();
 };
