@@ -12,27 +12,25 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
                                            const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+}
 
-	bool bIsServer = HasAuthority(&ActivationInfo);
-	if (!bIsServer)
+void UAuraProjectileSpell::SpawnProjectile()
+{
+	if (GetAvatarActorFromActorInfo()->HasAuthority())
 	{
-		return;
-	}
-
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
-	if (CombatInterface)
-	{
-		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
-		FTransform SpawnTransform;
-		SpawnTransform.SetLocation(SocketLocation);
-		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass,
-														SpawnTransform,
-														GetOwningActorFromActorInfo(),
-														Cast<APawn>(GetOwningActorFromActorInfo()),
-														ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-		// TODO give projectile an effect to cause damage
-
-		Projectile->FinishSpawning(SpawnTransform);
+		ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
+		if (CombatInterface)
+		{
+			FTransform SpawnTransform;
+			const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+			SpawnTransform.SetLocation(SocketLocation);
+			AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass,
+															SpawnTransform,
+															GetOwningActorFromActorInfo(),
+															Cast<APawn>(GetOwningActorFromActorInfo()),
+															ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+			Projectile->FinishSpawning(SpawnTransform);
+		}
 	}
 }
 
