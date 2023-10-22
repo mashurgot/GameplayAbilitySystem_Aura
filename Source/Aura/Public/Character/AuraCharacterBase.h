@@ -14,7 +14,7 @@ class UAttributeSet;
 class UGameplayEffect;
 
 UCLASS(Abstract)
-class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
+class AURA_API AAuraCharacterBase : public ACharacter, public ICombatInterface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -34,7 +34,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName WeaponTipSocketName;
 
+	/** Begin ICombatInterface */
 	virtual FVector GetCombatSocketLocation() override;
+	/** End ICombatInterface */
 	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;

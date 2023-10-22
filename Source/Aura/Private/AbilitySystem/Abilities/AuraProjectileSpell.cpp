@@ -14,23 +14,26 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UAuraProjectileSpell::SpawnProjectile()
+void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetLocation)
 {
-	if (GetAvatarActorFromActorInfo()->HasAuthority())
+	if (!GetAvatarActorFromActorInfo()->HasAuthority()) return;
+	ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
+	if (CombatInterface)
 	{
-		ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
-		if (CombatInterface)
-		{
-			FTransform SpawnTransform;
-			const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
-			SpawnTransform.SetLocation(SocketLocation);
-			AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass,
-															SpawnTransform,
-															GetOwningActorFromActorInfo(),
-															Cast<APawn>(GetOwningActorFromActorInfo()),
-															ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-			Projectile->FinishSpawning(SpawnTransform);
-		}
+		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+		FRotator Rotation = (TargetLocation - SocketLocation).Rotation();
+		// top down design decision - projectiles fly parallel to the ground
+		Rotation.Pitch = 0.f;
+
+		FTransform SpawnTransform;
+		SpawnTransform.SetLocation(SocketLocation);
+		SpawnTransform.SetRotation(Rotation.Quaternion());
+		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass,
+														SpawnTransform,
+														GetOwningActorFromActorInfo(),
+														Cast<APawn>(GetOwningActorFromActorInfo()),
+														ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		Projectile->FinishSpawning(SpawnTransform);
 	}
 }
 
