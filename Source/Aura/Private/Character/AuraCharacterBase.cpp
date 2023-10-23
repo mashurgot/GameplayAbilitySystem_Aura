@@ -50,6 +50,11 @@ FVector AAuraCharacterBase::GetCombatSocketLocation()
 	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
 
+UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
+{
+	return HitReactMontage;
+}
+
 void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
 	ApplyEffectToSelf(DefaultPrimaryAttributes);

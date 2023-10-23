@@ -36,6 +36,7 @@ protected:
 
 	/** Begin ICombatInterface */
 	virtual FVector GetCombatSocketLocation() override;
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	/** End ICombatInterface */
 	
 	UPROPERTY()
@@ -52,7 +53,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
-
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 
 	virtual void InitializeDefaultAttributes() const;
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> Effect, float Level = 1.0f) const;
