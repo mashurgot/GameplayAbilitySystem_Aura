@@ -23,6 +23,11 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet* GetAttributeSet() const;
 
+	virtual void Die() override;
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -61,7 +66,24 @@ protected:
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> Effect, float Level = 1.0f) const;
 
 	void AddCharacterAbilities();
+
+	/** dissolve effects */
 	
+	void Dissolve();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Dissolve")
+	void StartDissolveTimeline(UMaterialInstanceDynamic* MaterialInstance);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Dissolve")
+	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* MaterialInstance);
+
+	UPROPERTY(EditAnywhere, Category = "Dissolve")
+	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
+
+	UPROPERTY(EditAnywhere, Category = "Dissolve")
+	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
+
+
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Abilities")

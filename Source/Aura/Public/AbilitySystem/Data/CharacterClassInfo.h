@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "CharacterClassInfo.generated.h"
 
+class UGameplayAbility;
 class UGameplayEffect;
 
 UENUM(BlueprintType)
@@ -38,11 +39,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Class Defauklts")
 	TMap<ECharacterClass, FCharacterClassDefaultInfo> CharacterClassInformation;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Class Defauklts")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Class Defaults")
 	TSubclassOf<UGameplayEffect> SecondaryAttributes;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Class Defauklts")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Class Defaults")
 	TSubclassOf<UGameplayEffect> VitalAttributes;
 
 	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")
+	TArray<TSubclassOf<UGameplayAbility>> CommonAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults|Damage")
+	TObjectPtr<UCurveTable>DamageCalculationCoefficients;
 };
+

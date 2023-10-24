@@ -51,6 +51,11 @@ int32 AAuraEnemy::GetPlayerLevel()
 	return Level;
 }
 
+void AAuraEnemy::Die()
+{
+	SetLifeSpan(LifeSpan);
+	Super::Die();
+}
 
 
 void AAuraEnemy::BeginPlay()
@@ -58,6 +63,7 @@ void AAuraEnemy::BeginPlay()
 	Super::BeginPlay();
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
+	UAuraAbilitySystemLibrary::GiveStartupAbilities(this, ECharacterClass::Warrior, AbilitySystemComponent);
 }
 
 void AAuraEnemy::InitAbilityActorInfo()

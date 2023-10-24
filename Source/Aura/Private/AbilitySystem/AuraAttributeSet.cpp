@@ -7,7 +7,10 @@
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
+#include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/AuraPlayerController.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -111,6 +114,34 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
 
 			const bool bFatal = NewHealth <= 0.f;
+			if (bFatal)
+			{
+				if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(EffectProperties.Target.AvatarActor))
+				{
+					CombatInterface->Die();
+				}
+			}
+			else
+			{
+				FGameplayTagContainer HitReactTagContainer;
+				HitReactTagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				EffectProperties.Target.AbilitySystemComponent->TryActivateAbilitiesByTag(HitReactTagContainer);
+			}
+
+			ShowFloatingText(EffectProperties, LocalIncomingDamage);
+		}
+	}
+}
+
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties EffectProperties, const float Damage) const
+{
+	// show damage text
+	if (EffectProperties.Source.Character != EffectProperties.Target.Character)
+	{
+		AAuraPlayerController* PC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(EffectProperties.Source.Character, 0));
+		if (PC)
+		{
+			PC->ShowDamageNumber(Damage, EffectProperties.Target.Character);
 		}
 	}
 }
@@ -150,6 +181,7 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 		EffectProperties.Target.AbilitySystemComponent = Data.Target.AbilityActorInfo->AbilitySystemComponent.Get();
 		EffectProperties.Target.AvatarActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
 		EffectProperties.Target.PlayerController = Data.Target.AbilityActorInfo->PlayerController.Get();
+		EffectProperties.Target.Character = Cast<ACharacter>(EffectProperties.Target.AvatarActor);
 
 		// If there's no player controller, try to get it from the AvatarActor
 		if (EffectProperties.Target.PlayerController == nullptr && EffectProperties.Target.AvatarActor != nullptr)
@@ -158,12 +190,6 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 			{
 				EffectProperties.Target.PlayerController = Pawn->GetController<APlayerController>();
 			}
-		}
-
-		// Try to get the character from the Controller's pawn
-		if (EffectProperties.Target.PlayerController)
-		{
-			EffectProperties.Target.Character = Cast<ACharacter>(EffectProperties.Target.PlayerController->GetPawn());
 		}
 	}
 }
