@@ -39,9 +39,14 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& TargetLocation)
 		Projectile->SetOwner(GetOwningActorFromActorInfo());
 
 		// apply damage effect to the projectile
-		const UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwningActorFromActorInfo());
+		const UAbilitySystemComponent* AbilitySystemComponent =
+			UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwningActorFromActorInfo());
+
+		FGameplayEffectContextHandle EffectContextHandle = AbilitySystemComponent->MakeEffectContext();
+		EffectContextHandle.SetAbility(this);
+		EffectContextHandle.AddSourceObject(Projectile);
 		const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(
-			DamageEffectClass, GetAbilityLevel(), AbilitySystemComponent->MakeEffectContext());
+			DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
 
 		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Damage,
