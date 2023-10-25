@@ -40,7 +40,18 @@ void AAuraProjectile::Destroyed()
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactEffect, GetActorLocation(), FRotator::ZeroRotator);
 	}
 
-	if (LoopSoundComponent) LoopSoundComponent->Stop();
+	if (IsValid(LoopSoundComponent) && LoopSoundComponent->IsPlaying())
+	{
+		try
+		{
+			// temporary fix for crash on shutdown
+			LoopSoundComponent->Stop();
+		}
+		catch (...)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to stop loop sound component"));
+		}
+	}
 	Super::Destroyed();
 }
 
