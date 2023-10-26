@@ -139,6 +139,23 @@ public:
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxMana);
 
+
+	// resistances
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Resistance_Fire, Category = "Resistances")
+	FGameplayAttributeData Resistance_Fire;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Resistance_Fire);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Resistance_Lightening, Category = "Resistances")
+	FGameplayAttributeData Resistance_Lightening;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Resistance_Lightening);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Resistance_Arcane, Category = "Resistances")
+	FGameplayAttributeData Resistance_Arcane;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Resistance_Arcane);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Resistance_Physical, Category = "Resistances")
+	FGameplayAttributeData Resistance_Physical;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Resistance_Physical);
 	
 	// meta attributes
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
@@ -194,9 +211,21 @@ public:
 	UFUNCTION()
 	void OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const;
 
+	UFUNCTION()
+	void OnRep_Resistance_Fire(const FGameplayAttributeData& OldResistance_Fire) const;
+
+	UFUNCTION()
+	void OnRep_Resistance_Lightening(const FGameplayAttributeData& OldResistance_Lightening) const;
+
+	UFUNCTION()
+	void OnRep_Resistance_Arcane(const FGameplayAttributeData& OldResistance_Arcane) const;
+
+	UFUNCTION()
+	void OnRep_Resistance_Physical(const FGameplayAttributeData& OldResistance_Physical) const;
+
 private:
 
 	// Helper function to get the effect properties
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& EffectProperties) const;
-	void ShowFloatingText(const FEffectProperties EffectProperties, const float Damage, bool bBlockedHit, bool bCriticalHit) const;
+	void ShowFloatingText(const FEffectProperties& EffectProperties, const float Damage, bool bBlockedHit, bool bCriticalHit) const;
 };

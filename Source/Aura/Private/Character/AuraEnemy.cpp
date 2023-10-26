@@ -63,7 +63,10 @@ void AAuraEnemy::BeginPlay()
 	Super::BeginPlay();
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
-	UAuraAbilitySystemLibrary::GiveStartupAbilities(this, ECharacterClass::Warrior, AbilitySystemComponent);
+	if (HasAuthority())
+	{
+		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, ECharacterClass::Warrior, AbilitySystemComponent);
+	}
 }
 
 void AAuraEnemy::InitAbilityActorInfo()
@@ -99,8 +102,11 @@ void AAuraEnemy::InitAbilityActorInfo()
 		OnHealthChanged.Broadcast(AuraAttributeSet->GetHealth());
 		OnMaxHealthChanged.Broadcast(AuraAttributeSet->GetMaxHealth());
 	}
-	
-	InitializeDefaultAttributes();
+
+	if (HasAuthority())
+	{
+		InitializeDefaultAttributes();
+	}
 }
 
 void AAuraEnemy::HitReactTagChanged(const FGameplayTag HitReactType, int32 NewCount)
