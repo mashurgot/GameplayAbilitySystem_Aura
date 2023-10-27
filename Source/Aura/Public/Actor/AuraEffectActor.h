@@ -55,8 +55,11 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Applied Effects")
-	bool bDestroyOnEffectRemoval = false;
+	bool bDestroyOnEffectApplication = false;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Applied Effects")
+	bool bApplyEffectToEnemies = false;
+	
 	UFUNCTION(BlueprintCallable)
 	void OnOverlap(AActor* OverlappedActor);
 

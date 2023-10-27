@@ -21,6 +21,10 @@ void AAuraEffectActor::BeginPlay()
 
 void AAuraEffectActor::OnOverlap(AActor* OverlappedActor)
 {
+	if (OverlappedActor->ActorHasTag(FName("Enemy")) && !bApplyEffectToEnemies)
+	{
+		return;
+	}
 	for (const FGameplayEffectInfo& Info : Effects)
 	{
 		if (Info.ApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
@@ -30,7 +34,7 @@ void AAuraEffectActor::OnOverlap(AActor* OverlappedActor)
 	}
 
 	// if we have no infinite effects, check if we need to destroy this actor
-	if (ActiveEffectHandles.Num() == 0 && bDestroyOnEffectRemoval)
+	if (ActiveEffectHandles.Num() == 0 && bDestroyOnEffectApplication)
 	{
 		Destroy();
 	}
@@ -38,6 +42,10 @@ void AAuraEffectActor::OnOverlap(AActor* OverlappedActor)
 
 void AAuraEffectActor::OnEndOverlap(AActor* OverlappedActor)
 {
+	if (OverlappedActor->ActorHasTag(FName("Enemy")) && !bApplyEffectToEnemies)
+	{
+		return;
+	}
 	for (const FGameplayEffectInfo& Info : Effects)
 	{
 		if (Info.ApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
@@ -67,7 +75,7 @@ void AAuraEffectActor::OnEndOverlap(AActor* OverlappedActor)
 		}
 	}
 	// check if we need to destroy this actor
-	if (bDestroyOnEffectRemoval)
+	if (bDestroyOnEffectApplication)
 	{
 		Destroy();
 	}
@@ -75,6 +83,10 @@ void AAuraEffectActor::OnEndOverlap(AActor* OverlappedActor)
 
 void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
+	if (TargetActor->ActorHasTag(FName("Enemy")) && !bApplyEffectToEnemies)
+	{
+		return;
+	}
 	UAbilitySystemComponent* TargetAbilitySystemComponent =
 		UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	if (TargetAbilitySystemComponent == nullptr)
