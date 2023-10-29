@@ -153,3 +153,22 @@ void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldC
 		}
 	}
 }
+
+bool UAuraAbilitySystemLibrary::IsNotFriendly(const AActor* ActorA, const AActor* ActorB)
+{
+	if (!ActorA || !ActorB)
+	{
+		// If either actor is null, we can't determine their relationship, so return true (not friendly).
+		return true;
+	}
+
+	if ((ActorA->ActorHasTag(FName("Enemy")) && ActorB->ActorHasTag(FName("Enemy")))
+		|| (ActorA->ActorHasTag(FName("Player")) && ActorB->ActorHasTag(FName("Player"))))
+	{
+		// Both actors have the same tag, so they are friendly to each other.
+		return false;
+	}
+
+	// If we've reached this point, the actors are not friendly to each other.
+	return true;
+}
