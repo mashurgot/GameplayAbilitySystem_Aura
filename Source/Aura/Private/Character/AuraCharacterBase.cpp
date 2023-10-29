@@ -54,6 +54,7 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve();
+	bDead = true;
 }
 
 void AAuraCharacterBase::BeginPlay()
@@ -66,7 +67,7 @@ void AAuraCharacterBase::InitAbilityActorInfo()
 	//
 }
 
-FVector AAuraCharacterBase::GetCombatSocketLocation()
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation()
 {
 	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
@@ -74,6 +75,16 @@ FVector AAuraCharacterBase::GetCombatSocketLocation()
 UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
 {
 	return HitReactMontage;
+}
+
+const bool AAuraCharacterBase::IsDead_Implementation()
+{
+	return bDead;
+}
+
+AActor* AAuraCharacterBase::GetAvatar_Implementation()
+{
+	return this;
 }
 
 void AAuraCharacterBase::InitializeDefaultAttributes() const
